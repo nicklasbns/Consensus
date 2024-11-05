@@ -60,6 +60,29 @@ func (s *server) PassToken(ctx context.Context, empty *pb.Token) (*pb.Empty, err
 	return &pb.Empty{}, nil
 }
 
+func writeToFile(s *server) {
+	if rand.Intn(10) == 0 {
+		currentTime := time.Now().Format("2006-01-02 15:04:05")
+		data := []byte("Client " + strconv.Itoa(s.address) + " wrote at: " + currentTime + "\n")
+		file, err := os.OpenFile("CriticalSection.txt", os.O_APPEND|os.O_CREATE, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+
+		_, err = file.Write(data)
+		if err != nil {
+			log.Fatal(err)
+		}
+		file.Close()
+
+		log.Println("Wrote to file")
+		time.Sleep(1 * time.Second)
+	}
+	s.client.PassToken(context.Background(), &pb.Token{})
+	log.Println("sent Token")
+}
+
 func (s *server) StartFunction(ctx context.Context, empty *pb.Empty) (*pb.SuccessStart, error) {
 	if s.started {
 		log.Println("Server already started")
@@ -102,26 +125,4 @@ func connectToServer(address int) (*pb.SuccessStart, pb.ConsensusClient) {
 	message, err := client.StartFunction(context.Background(), &pb.Empty{})
 	return message, client
 
-}
-
-func writeToFile(s *server) {
-	if rand.Intn(10) == 0 {
-		currentTime := time.Now().Format("2006-01-02 15:04:05")
-		data := []byte("Client " + strconv.Itoa(s.address) + " wrote at: " + currentTime + "\n")
-		file, err := os.OpenFile("CriticalSection.txt", os.O_APPEND|os.O_CREATE, 0644)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer file.Close()
-
-		_, err = file.Write(data)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		log.Println("Wrote to file")
-		time.Sleep(1 * time.Second)
-	}
-	s.client.PassToken(context.Background(), &pb.Token{})
-	log.Println("sent Token")
 }
