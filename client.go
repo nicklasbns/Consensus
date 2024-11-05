@@ -59,6 +59,9 @@ func (s *server) StartFunction(ctx context.Context, empty *pb.Empty) (*pb.Empty,
 	defer conn.Close()
 
 	s.client = pb.NewConsensusClient(conn)
+	s.client.StartFunction(context.Background(), &pb.Empty{})
 	log.Println("Connect Success to address" + strconv.Itoa(s.address+1))
-	return &pb.Empty{}, nil
+	return &pb.Empty{
+		message: "Server " + strconv.Itoa(s.address) + " started",
+	}, nil
 }

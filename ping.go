@@ -18,5 +18,6 @@ func main() {
 	defer conn.Close()
 
 	client := pb.NewConsensusClient(conn)
-	client.SendMessage(context.Background(), &pb.Empty{})
+	message, err := client.StartFunction(context.Background(), &pb.Empty{})
+	log.Println(message)
 }
