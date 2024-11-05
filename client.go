@@ -81,18 +81,12 @@ func (s *server) StartFunction(ctx context.Context, empty *pb.Empty) (*pb.Succes
 	log.Println("Connect Success to address" + strconv.Itoa(s.targetAddress))
 
 	if s.address == 2 {
-		go handleToken(s)
+		go writeToFile(s)
 	}
 
 	return &pb.SuccessStart{
 		Message: "Server " + strconv.Itoa(s.address) + " started",
 	}, nil
-}
-
-func handleToken(s *server) {
-
-	s.client.PassToken(context.Background(), &pb.Token{})
-	log.Println("Passed the first token")
 }
 
 func connectToServer(address int) (*pb.SuccessStart, pb.ConsensusClient) {
@@ -101,7 +95,7 @@ func connectToServer(address int) (*pb.SuccessStart, pb.ConsensusClient) {
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
-	defer conn.Close()
+	// defer conn.Close()
 
 	client := pb.NewConsensusClient(conn)
 	message, err := client.StartFunction(context.Background(), &pb.Empty{})
@@ -112,10 +106,12 @@ func connectToServer(address int) (*pb.SuccessStart, pb.ConsensusClient) {
 func writeToFile(s *server) {
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
 	data := []byte(currentTime + " Written by " + strconv.Itoa(s.address))
-	err := os.WriteFile("CitricalSection.txt", data, 0644)
+	err := os.WriteFile("CriticalSection.txt", data, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("Wrote to file")
 	time.Sleep(1 * time.Second)
 	s.client.PassToken(context.Background(), &pb.Token{})
+	log.Println("sent Token")
 }
