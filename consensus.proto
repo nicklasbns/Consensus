@@ -6,10 +6,14 @@ service consensus {
     
     rpc StartFunction (Empty) returns (SuccessStart);
 
+    rpc PassToken (Token) returns (Empty);
+
 }
 
 message SuccessStart {
     string message = 1;
 }
+
+message Token {}
 
 message Empty {}
