@@ -4,7 +4,6 @@ option go_package = "Consensus/consensus";
 
 service consensus {
     
-    // A client sends a message to the chat
     rpc SendMessage (Empty) returns (Empty);
 
 }
