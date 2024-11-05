@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "./consensus";
+option go_package = "Consensus/consensus";
 
 service consensus {
     
