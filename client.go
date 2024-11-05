@@ -9,10 +9,13 @@ import (
 	"strconv"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type server struct {
 	pb.UnimplementedConsensusServer
+	address int
+	client  pb.ConsensusClient
 }
 
 func main() {
@@ -20,6 +23,8 @@ func main() {
 	var err error
 	address := 2
 	var addrString string
+
+	// server stuff
 	for {
 		addrString = "127.0.0." + strconv.Itoa(address) + ":50051"
 		lis, err = net.Listen("tcp", addrString)
@@ -31,7 +36,9 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	s := &server{}
+	s := &server{
+		address: address,
+	}
 	pb.RegisterConsensusServer(grpcServer, s)
 
 	fmt.Println("Server is running on address", addrString)
@@ -41,7 +48,17 @@ func main() {
 
 }
 
-func (s *server) SendMessage(ctx context.Context, empty *pb.Empty) (*pb.Empty, error) {
-	log.Println("New Message")
+func (s *server) StartFunction(ctx context.Context, empty *pb.Empty) (*pb.Empty, error) {
+	log.Println("Server " + strconv.Itoa(s.address) + " started")
+
+	connectAddress := "127.0.0." + strconv.Itoa(s.address+1) + ":50051"
+	conn, err := grpc.NewClient(connectAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+	s.client = pb.NewConsensusClient(conn)
+	log.Println("Connect Success to address" + strconv.Itoa(s.address+1))
 	return &pb.Empty{}, nil
 }
