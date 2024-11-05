@@ -28,9 +28,9 @@ go run ping.go
 
 | System Requirements |  |
 |--|--|
-| R1 |  |
-| R2 |  |
-| R3 |  |
+| R1 | x |
+| R2 | x |
+| R3 | x |
 
 -   R1: Implement a system with a set of peer nodes and a Critical Section that represents a sensitive system operation. Any node may request access to the Critical Section at any time. In this exercise, the Critical Section is emulated, for example, by a print statement or writing to a shared file on the network.
 -   R2: (Safety) Only one node may enter the Critical Section at any time.
