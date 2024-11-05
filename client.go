@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"os"
 	"strconv"
@@ -104,14 +105,23 @@ func connectToServer(address int) (*pb.SuccessStart, pb.ConsensusClient) {
 }
 
 func writeToFile(s *server) {
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	data := []byte(currentTime + " Written by " + strconv.Itoa(s.address))
-	err := os.WriteFile("CriticalSection.txt", data, 0644)
-	if err != nil {
-		log.Fatal(err)
+	if rand.Intn(10) == 0 {
+		currentTime := time.Now().Format("2006-01-02 15:04:05")
+		data := []byte("Client " + strconv.Itoa(s.address) + " wrote at: " + currentTime + "\n")
+		file, err := os.OpenFile("CriticalSection.txt", os.O_APPEND|os.O_CREATE, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+
+		_, err = file.Write(data)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Println("Wrote to file")
+		time.Sleep(1 * time.Second)
 	}
-	log.Println("Wrote to file")
-	time.Sleep(1 * time.Second)
 	s.client.PassToken(context.Background(), &pb.Token{})
 	log.Println("sent Token")
 }
