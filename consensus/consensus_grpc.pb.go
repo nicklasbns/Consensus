@@ -19,15 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Consensus_SendMessage_FullMethodName = "/consensus/SendMessage"
+	Consensus_StartFunction_FullMethodName = "/consensus/StartFunction"
 )
 
 // ConsensusClient is the client API for Consensus service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConsensusClient interface {
-	// A client sends a message to the chat
-	SendMessage(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	StartFunction(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type consensusClient struct {
@@ -38,10 +37,10 @@ func NewConsensusClient(cc grpc.ClientConnInterface) ConsensusClient {
 	return &consensusClient{cc}
 }
 
-func (c *consensusClient) SendMessage(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+func (c *consensusClient) StartFunction(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, Consensus_SendMessage_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Consensus_StartFunction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,8 +51,7 @@ func (c *consensusClient) SendMessage(ctx context.Context, in *Empty, opts ...gr
 // All implementations must embed UnimplementedConsensusServer
 // for forward compatibility.
 type ConsensusServer interface {
-	// A client sends a message to the chat
-	SendMessage(context.Context, *Empty) (*Empty, error)
+	StartFunction(context.Context, *Empty) (*Empty, error)
 	mustEmbedUnimplementedConsensusServer()
 }
 
@@ -64,8 +62,8 @@ type ConsensusServer interface {
 // pointer dereference when methods are called.
 type UnimplementedConsensusServer struct{}
 
-func (UnimplementedConsensusServer) SendMessage(context.Context, *Empty) (*Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+func (UnimplementedConsensusServer) StartFunction(context.Context, *Empty) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartFunction not implemented")
 }
 func (UnimplementedConsensusServer) mustEmbedUnimplementedConsensusServer() {}
 func (UnimplementedConsensusServer) testEmbeddedByValue()                   {}
@@ -88,20 +86,20 @@ func RegisterConsensusServer(s grpc.ServiceRegistrar, srv ConsensusServer) {
 	s.RegisterService(&Consensus_ServiceDesc, srv)
 }
 
-func _Consensus_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Consensus_StartFunction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ConsensusServer).SendMessage(ctx, in)
+		return srv.(ConsensusServer).StartFunction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Consensus_SendMessage_FullMethodName,
+		FullMethod: Consensus_StartFunction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConsensusServer).SendMessage(ctx, req.(*Empty))
+		return srv.(ConsensusServer).StartFunction(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -114,8 +112,8 @@ var Consensus_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ConsensusServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SendMessage",
-			Handler:    _Consensus_SendMessage_Handler,
+			MethodName: "StartFunction",
+			Handler:    _Consensus_StartFunction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
