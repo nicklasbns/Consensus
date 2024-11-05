@@ -5,10 +5,14 @@
 Open terminal session and cd to project
 ```
 project
+│   .gitignore
+│   CriticalSection.txt
 │   README.md
-│   
-└───tmp
-│   │   tmp
+│   client.go
+│   consensus.proto
+└───consensus
+│   │   consensus.pb.go
+│   │   consensus_grpc.pb.go
 └───└─────────────────────────
 ```
 
