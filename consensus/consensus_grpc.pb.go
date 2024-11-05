@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConsensusClient interface {
-	StartFunction(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	StartFunction(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SuccessStart, error)
 }
 
 type consensusClient struct {
@@ -37,9 +37,9 @@ func NewConsensusClient(cc grpc.ClientConnInterface) ConsensusClient {
 	return &consensusClient{cc}
 }
 
-func (c *consensusClient) StartFunction(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+func (c *consensusClient) StartFunction(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SuccessStart, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Empty)
+	out := new(SuccessStart)
 	err := c.cc.Invoke(ctx, Consensus_StartFunction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *consensusClient) StartFunction(ctx context.Context, in *Empty, opts ...
 // All implementations must embed UnimplementedConsensusServer
 // for forward compatibility.
 type ConsensusServer interface {
-	StartFunction(context.Context, *Empty) (*Empty, error)
+	StartFunction(context.Context, *Empty) (*SuccessStart, error)
 	mustEmbedUnimplementedConsensusServer()
 }
 
@@ -62,7 +62,7 @@ type ConsensusServer interface {
 // pointer dereference when methods are called.
 type UnimplementedConsensusServer struct{}
 
-func (UnimplementedConsensusServer) StartFunction(context.Context, *Empty) (*Empty, error) {
+func (UnimplementedConsensusServer) StartFunction(context.Context, *Empty) (*SuccessStart, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartFunction not implemented")
 }
 func (UnimplementedConsensusServer) mustEmbedUnimplementedConsensusServer() {}
