@@ -16,11 +16,15 @@ project
 └───└─────────────────────────
 ```
 
-Run the clientside part of the program
+Run the clientside part of the program the amount of times that clients are needed
 ```
 go run client.go
 ```
 
+When all clients have joined and you wish to start the program then
+```
+go run ping.go
+```
 
 | System Requirements |  |
 |--|--|
